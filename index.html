@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spanish Word Factory</title>
+<meta name="description" content="Turn English words into Spanish with 19 word rules, dodge 4 sneaky traps, and build a shareable word card.">
+<meta property="og:title" content="Spanish Word Factory">
+<meta property="og:description" content="Spot one ending, and thousands of Spanish words open up. 19 rules, 4 sneaky traps, and a quiz.">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --bg:#fff6e8; --surface:#ffffff; --on-surface:#1b1712; --muted:#5c5247;
+  --ink:#1b1712; --on-ink:#fff6e8;
+  --orange:#ff6b1a; --on-orange:#1b1712; --orange-text:#c24400;
+  --sun:#ffd23f; --on-sun:#1b1712;
+  --teal:#0b7d75; --on-teal:#ffffff;
+  --bad:#c8341f; --on-bad:#ffffff;
+  --twist:#1b1712; --on-twist:#fff6e8; --twist-accent:#ffd23f;
+  --line:#1b1712; --shadow:#1b1712; --focus:#0b7d75;
+  --input:#ffffff; --on-input:#1b1712;
+  --display: ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Nunito", "Varela Round", "Trebuchet MS", system-ui, sans-serif;
+  --body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15120e; --surface:#241e17; --on-surface:#fbf3e6; --muted:#cbbca7;
+    --ink:#fbf3e6; --on-ink:#15120e;
+    --teal:#13a89e; --on-teal:#0d0b08; --orange-text:#ff8a3d;
+    --bad:#ff6a55; --on-bad:#0d0b08;
+    --twist:#0a0806; --on-twist:#fbf3e6;
+    --line:#e9dcc8; --shadow:#e9dcc8; --focus:#ffd23f;
+    --input:#15120e; --on-input:#fbf3e6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15120e; --surface:#241e17; --on-surface:#fbf3e6; --muted:#cbbca7;
+  --ink:#fbf3e6; --on-ink:#15120e;
+  --teal:#13a89e; --on-teal:#0d0b08; --orange-text:#ff8a3d;
+  --bad:#ff6a55; --on-bad:#0d0b08;
+  --twist:#0a0806; --on-twist:#fbf3e6;
+  --line:#e9dcc8; --shadow:#e9dcc8; --focus:#ffd23f;
+  --input:#15120e; --on-input:#fbf3e6;
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--on-surface);font:17px/1.55 var(--body);overflow-wrap:break-word}
+h1,h2,h3{font-family:var(--display);line-height:1.05;margin:0;letter-spacing:-.01em}
+h2{font-size:clamp(1.8rem,5vw,2.6rem)}
+p{margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+section{padding:56px 0 8px}
+.kicker{display:inline-block;font:800 .8rem/1 var(--display);text-transform:uppercase;letter-spacing:.12em;background:var(--ink);color:var(--on-ink);padding:6px 10px;border-radius:999px;margin-bottom:12px}
+.lead{color:var(--muted);margin-top:10px;max-width:60ch}
+
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+
+/* sticker bits */
+.btn{font:800 1rem/1 var(--display);border:3px solid var(--line);border-radius:14px;padding:13px 18px;cursor:pointer;
+  background:var(--orange);color:var(--on-orange);box-shadow:4px 4px 0 var(--shadow);transition:transform .12s,box-shadow .12s;min-height:48px}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--shadow)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--shadow)}
+.btn.sun{background:var(--sun);color:var(--on-sun)}
+.btn.teal{background:var(--teal);color:var(--on-teal)}
+.btn.small{padding:8px 12px;min-height:38px;font-size:.88rem;border-width:2px;box-shadow:3px 3px 0 var(--shadow)}
+.card{background:var(--surface);color:var(--on-surface);border:3px solid var(--line);border-radius:20px;box-shadow:6px 6px 0 var(--shadow)}
+
+/* hero */
+.hero{padding-top:40px;padding-bottom:28px;position:relative}
+.logo{display:inline-flex;gap:8px;align-items:center;font:800 .9rem/1 var(--display);background:var(--sun);color:var(--on-sun);border:3px solid var(--line);border-radius:999px;padding:8px 14px;box-shadow:3px 3px 0 var(--shadow);transform:rotate(-2deg)}
+.hero h1{font-size:clamp(2.6rem,11vw,5.6rem);margin-top:22px}
+.hero h1 .o{color:var(--orange-text)}
+.hero h1 .t{color:var(--teal)}
+.hook{font-size:clamp(1.1rem,3.6vw,1.45rem);font-weight:650;margin-top:14px;max-width:34ch}
+.stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;padding:0;list-style:none}
+.stat{border:3px solid var(--line);border-radius:16px;padding:10px 14px;box-shadow:4px 4px 0 var(--shadow);font:800 1rem/1.1 var(--display)}
+.stat b{display:block;font-size:1.7rem}
+.stat:nth-child(1){background:var(--orange);color:var(--on-orange);transform:rotate(-1.5deg)}
+.stat:nth-child(2){background:var(--sun);color:var(--on-sun);transform:rotate(1deg)}
+.stat:nth-child(3){background:var(--teal);color:var(--on-teal);transform:rotate(-.5deg)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.hero-cta a{text-decoration:none;display:inline-flex;align-items:center}
+
+.belt{margin-top:34px;border-block:3px solid var(--line);background:var(--ink);color:var(--on-ink);overflow:hidden}
+.belt-track{display:flex;width:max-content;animation:belt 40s linear infinite}
+.belt span{white-space:nowrap;padding:12px 18px;font:800 1rem/1 var(--display)}
+.belt span i{font-style:normal;color:var(--sun)}
+@keyframes belt{to{transform:translateX(-50%)}}
+
+/* rules */
+.rules{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:20px;margin-top:26px;padding:0;list-style:none}
+.rule{padding:16px;display:flex;flex-direction:column;gap:12px}
+.rule-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.num{font:800 .75rem/1 var(--display);color:var(--muted);width:100%}
+.end{font:800 1.15rem/1 var(--display);border:2px solid var(--line);border-radius:10px;padding:6px 9px}
+.end.en{background:var(--surface);color:var(--on-surface)}
+.end.es{background:var(--sun);color:var(--on-sun)}
+.end.same{background:var(--teal);color:var(--on-teal);font-size:.95rem}
+.arrow{font:800 1.2rem/1 var(--display);color:var(--orange-text)}
+.rule ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.rule li{font-weight:700}
+.rule li span{font-weight:400;color:var(--muted)}
+.rule .btn{margin-top:auto;align-self:flex-start}
+.rule.new{background:var(--sun);color:var(--on-sun)}
+.rule.new li span,.rule.new .num{color:var(--on-sun)}
+.rule.new .end{border-color:#1b1712}
+.rule.new .end.en{background:#fffdf6;color:#1b1712}
+.rule.new .end.es{background:var(--orange);color:var(--on-orange)}
+.rule.new .arrow{color:#1b1712}
+.rule.new .btn{background:var(--orange);color:var(--on-orange)}
+
+/* converter */
+.converter{padding:22px;margin-top:24px;display:grid;gap:16px}
+.conv-row{display:flex;gap:12px;flex-wrap:wrap}
+.conv-row label{width:100%;font:800 1rem/1 var(--display)}
+.conv-row input{flex:1 1 200px;min-width:0;font:700 1.2rem/1 var(--body);padding:12px 14px;border:3px solid var(--line);border-radius:14px;background:var(--input);color:var(--on-input);min-height:52px}
+.result{border:3px dashed var(--line);border-radius:16px;padding:18px;min-height:110px}
+.result .big{font:800 clamp(2rem,9vw,3.2rem)/1.05 var(--display);color:var(--orange-text);overflow-wrap:anywhere}
+.result .from{color:var(--muted);font-weight:700}
+.result .ruleused{display:inline-block;margin-top:10px;background:var(--sun);color:var(--on-sun);border:2px solid var(--line);border-radius:999px;padding:4px 12px;font:800 .9rem/1.3 var(--display)}
+.result .tip{margin-top:10px;color:var(--muted);font-size:.95rem}
+.result .warn{margin-top:12px;background:var(--twist);color:var(--on-twist);border-radius:12px;padding:12px 14px;font-size:.95rem}
+.result .warn b{color:var(--twist-accent)}
+.result.empty{color:var(--muted)}
+
+/* twists */
+.twists{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:20px;margin-top:26px;padding:0;list-style:none}
+.twist{background:var(--twist);color:var(--on-twist);border:3px solid var(--line);border-radius:20px;box-shadow:6px 6px 0 var(--orange);padding:18px;position:relative}
+.twist .tag{position:absolute;top:-14px;right:14px;background:var(--orange);color:var(--on-orange);border:2px solid var(--line);border-radius:999px;padding:4px 10px;font:800 .75rem/1 var(--display);text-transform:uppercase;letter-spacing:.08em;transform:rotate(3deg)}
+.twist h3{font-size:1.5rem;color:var(--twist-accent);overflow-wrap:anywhere}
+.twist p{margin-top:8px;font-size:.98rem}
+.twist p b{color:var(--twist-accent)}
+
+/* quiz */
+.quiz{padding:22px;margin-top:24px}
+.quiz-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:800 .95rem/1 var(--display)}
+.pill{background:var(--ink);color:var(--on-ink);border-radius:999px;padding:7px 12px}
+.bar{height:12px;border:2px solid var(--line);border-radius:999px;margin-top:14px;overflow:hidden;background:var(--bg)}
+.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.q{font:800 clamp(1.4rem,5vw,2rem)/1.15 var(--display);margin-top:20px}
+.q em{font-style:normal;color:var(--orange-text);overflow-wrap:anywhere}
+.choices{display:grid;gap:12px;margin-top:18px}
+.choice{text-align:left;background:var(--surface);color:var(--on-surface);font-size:1.15rem;font-family:var(--body);font-weight:700;overflow-wrap:anywhere}
+.choice.right{background:var(--teal);color:var(--on-teal)}
+.choice.wrong{background:var(--bad);color:var(--on-bad)}
+.choice:disabled{cursor:default}
+.choice:disabled:hover{transform:none;box-shadow:4px 4px 0 var(--shadow)}
+.feedback{margin-top:16px;font-weight:700;min-height:1.6em}
+.feedback .rl{display:inline-block;background:var(--sun);color:var(--on-sun);border-radius:8px;padding:1px 8px;margin-left:4px}
+.quiz-actions{margin-top:16px;display:flex;gap:12px;flex-wrap:wrap}
+.results{text-align:center;padding:12px 0}
+.results .score{font:800 clamp(3.5rem,16vw,6rem)/1 var(--display);color:var(--orange-text)}
+.results p{margin:10px auto 18px;max-width:40ch}
+[hidden]{display:none !important}
+
+/* word card */
+.share{margin-top:24px;display:flex;justify-content:center}
+.wordcard{width:100%;max-width:620px;background:var(--sun);color:var(--on-sun);border:4px solid #1b1712;border-radius:26px;box-shadow:8px 8px 0 var(--shadow);padding:24px 22px;position:relative;overflow:hidden}
+.wordcard::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:var(--orange);opacity:.35;right:-60px;top:-60px}
+.wc-head{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.wordcard h3{font-size:clamp(1.6rem,6.5vw,2.3rem);max-width:12ch}
+.count{background:#1b1712;color:#ffd23f;border-radius:16px;padding:8px 12px;font:800 .85rem/1.1 var(--display);text-align:center}
+.count b{display:block;font-size:1.8rem}
+.chips{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;list-style:none}
+.chip{background:#fffdf6;color:#1b1712;border:2px solid #1b1712;border-radius:999px;padding:5px 12px;font-weight:700;font-size:.95rem;box-shadow:2px 2px 0 #1b1712;overflow-wrap:anywhere}
+.chip span{color:#b4470a}
+.wc-empty{position:relative;z-index:1;margin-top:18px;border:2px dashed #1b1712;border-radius:16px;padding:18px;font-weight:700}
+.wc-foot{position:relative;z-index:1;margin-top:22px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font:800 .85rem/1.2 var(--display);border-top:2px solid #1b1712;padding-top:12px}
+.share-actions{display:flex;justify-content:center;gap:12px;margin-top:18px;flex-wrap:wrap;color:var(--muted);font-size:.95rem;align-items:center}
+
+footer{padding:56px 0 40px;color:var(--muted);text-align:center;font-size:.9rem}
+
+.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .belt-track{width:auto;flex-wrap:wrap;justify-content:center}
+  .belt-track span[aria-hidden]{display:none}
+  html{scroll-behavior:auto}
+}
+@media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth} }
+</style>
+</head>
+<body>
+
+<header class="wrap hero">
+  <span class="logo">🏭 Word Factory</span>
+  <h1>Spanish <span class="o">Word</span> <span class="t">Factory</span></h1>
+  <p class="hook">Spot one ending, and thousands of Spanish words open up.</p>
+  <ul class="stats" aria-label="At a glance">
+    <li class="stat"><b>19</b>rules</li>
+    <li class="stat"><b>1000s</b>of words</li>
+    <li class="stat"><b>4</b>sneaky traps</li>
+  </ul>
+  <div class="hero-cta">
+    <a class="btn" href="#rules">See the rules</a>
+    <a class="btn sun" href="#quiz">Jump to the quiz</a>
+  </div>
+</header>
+
+<div class="belt" aria-hidden="true"><div class="belt-track" id="belt"></div></div>
+
+<main class="wrap">
+
+  <section id="rules" aria-labelledby="rules-h">
+    <span class="kicker">The machines</span>
+    <h2 id="rules-h">19 conversion rules</h2>
+    <p class="lead">Feed an English word in, swap the ending, and a Spanish word comes out. Tap “Try it” to send an example to the converter.</p>
+    <ul class="rules" id="ruleList"></ul>
+  </section>
+
+  <section id="convert" aria-labelledby="conv-h">
+    <span class="kicker">Your turn</span>
+    <h2 id="conv-h">The converter</h2>
+    <p class="lead">Type any English word. The factory finds the longest ending it knows and builds a Spanish guess.</p>
+    <div class="card converter">
+      <form class="conv-row" id="convForm" autocomplete="off">
+        <label for="convInput">English word</label>
+        <input id="convInput" type="text" inputmode="text" spellcheck="false" placeholder="e.g. curiosity" autocapitalize="none">
+        <button class="btn" type="submit">Convert</button>
+      </form>
+      <div class="result empty" id="convOut" aria-live="polite">Your Spanish word will appear here. Try <b>generous</b>, <b>nation</b> or <b>electric</b>.</div>
+    </div>
+  </section>
+
+  <section id="twists" aria-labelledby="tw-h">
+    <span class="kicker">Watch out</span>
+    <h2 id="tw-h">Plot twists</h2>
+    <p class="lead">Four words that look like they follow the rules, but mean something else.</p>
+    <ul class="twists">
+      <li class="twist"><span class="tag">Trap 1</span><h3>actual</h3><p>Looks like a stays-the-same word, but in Spanish <b>actual</b> means “current,” not “real.”</p></li>
+      <li class="twist"><span class="tag">Trap 2</span><h3>exit → éxito</h3><p><b>Éxito</b> means success. Exit is <b>salida</b>.</p></li>
+      <li class="twist"><span class="tag">Trap 3</span><h3>embarrassed → embarazada</h3><p><b>Embarazada</b> means pregnant. Embarrassed is <b>avergonzado</b>.</p></li>
+      <li class="twist"><span class="tag">Trap 4</span><h3>library → librería</h3><p><b>Librería</b> is a bookshop. Library is <b>biblioteca</b>.</p></li>
+    </ul>
+  </section>
+
+  <section id="quiz" aria-labelledby="quiz-h">
+    <span class="kicker">Quality control</span>
+    <h2 id="quiz-h">The quiz</h2>
+    <p class="lead">Ten random words. Every right answer goes onto your word card.</p>
+    <div class="card quiz" id="quizBox">
+      <div id="quizPlay">
+        <div class="quiz-top"><span class="pill" id="qNum">Question 1 / 10</span><span class="pill" id="qScore">Score 0</span></div>
+        <div class="bar" aria-hidden="true"><i id="qBar"></i></div>
+        <p class="q" id="qText"></p>
+        <div class="choices" id="qChoices"></div>
+        <p class="feedback" id="qFeedback" aria-live="polite"></p>
+        <div class="quiz-actions"><button class="btn teal" id="qNext" hidden>Next word →</button></div>
+      </div>
+      <div class="results" id="quizDone" hidden>
+        <span class="kicker">Shift complete</span>
+        <div class="score" id="rScore">0/10</div>
+        <p id="rMsg"></p>
+        <div class="quiz-actions" style="justify-content:center">
+          <button class="btn" id="qAgain">Play again</button>
+          <a class="btn sun" href="#card" style="text-decoration:none;display:inline-flex;align-items:center">See my word card</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="card" aria-labelledby="wc-h">
+    <span class="kicker">Show it off</span>
+    <h2>Your word card</h2>
+    <p class="lead">Screenshot it and share what your factory built.</p>
+    <div class="share">
+      <div class="wordcard" id="wordcard">
+        <div class="wc-head">
+          <h3 id="wc-h">My Spanish Word Factory</h3>
+          <div class="count"><b id="wcCount">0</b>words built</div>
+        </div>
+        <ul class="chips" id="wcChips"></ul>
+        <p class="wc-empty" id="wcEmpty">Your card is empty. Answer quiz questions to stamp words here. 🏭</p>
+        <div class="wc-foot"><span>Spot the ending. Build the word.</span><span>English → Español</span></div>
+      </div>
+    </div>
+    <div class="share-actions"><span>Tip: screenshot the yellow card.</span><button class="btn small sun" id="wcClear">Clear card</button></div>
+  </section>
+
+</main>
+<footer class="wrap">Rules give a strong first guess. Always check accents, gender and meaning in a dictionary.</footer>
+
+<script>
+(function(){
+const RULES=[
+ {en:'-ude',es:'-ud',m:[['ude','ud']],ex:[['gratitud','gratitude'],['aptitud','aptitude'],['altitud','altitude']]},
+ {en:'-id',es:'-ido',m:[['id','ido']],ex:[['vívido','vivid'],['rápido','rapid'],['tímido','timid']]},
+ {en:'-ive',es:'-ivo',m:[['ive','ivo']],ex:[['activo','active'],['explosivo','explosive'],['creativo','creative']]},
+ {en:'-mum',es:'-mo',m:[['mum','mo']],ex:[['óptimo','optimum'],['máximo','maximum'],['mínimo','minimum']]},
+ {en:'-sm',es:'-smo',m:[['sm','smo']],ex:[['optimismo','optimism'],['pacifismo','pacifism'],['sarcasmo','sarcasm']]},
+ {en:'-ary',es:'-ario',m:[['ary','ario']],ex:[['primario','primary'],['salario','salary'],['voluntario','voluntary']]},
+ {en:'-ory',es:'-oria',m:[['ory','oria']],ex:[['gloria','glory'],['historia','history'],['victoria','victory']]},
+ {en:'-ade',es:'-ada',m:[['ade','ada']],ex:[['barricada','barricade'],['escapada','escapade'],['cascada','cascade']]},
+ {en:'-ist',es:'-ista',m:[['ist','ista']],ex:[['artista','artist'],['pianista','pianist'],['fascista','fascist']]},
+ {en:'-ure',es:'-ura',m:[['ure','ura']],ex:[['agricultura','agriculture'],['caricatura','caricature'],['textura','texture']]},
+ {en:'-ible / -able',es:'same',m:[['ible','ible'],['able','able']],ex:[['terrible','terrible'],['visible','visible'],['probable','probable']]},
+ {en:'-al',es:'same',m:[['al','al']],ex:[['local','local'],['personal','personal'],['central','central']]},
+ {en:'-or',es:'same',m:[['or','or']],ex:[['doctor','doctor'],['actor','actor'],['pastor','pastor']]},
+ {en:'-ation',es:'-ación',m:[['ation','ación']],ex:[['transformación','transformation'],['información','information'],['invitación','invitation']]},
+ {en:'-ic / -ical',es:'-ico',m:[['ical','ico'],['ic','ico']],ex:[['político','political'],['típico','typical'],['dramático','dramatic']]},
+ {en:'-ant / -ent',es:'-ante / -ente',m:[['ant','ante'],['ent','ente']],ex:[['importante','important'],['presidente','president'],['cliente','client']]},
+ {en:'-ty',es:'-dad',m:[['ty','dad']],ex:[['publicidad','publicity'],['actividad','activity'],['realidad','reality']]},
+ {en:'-ous',es:'-oso',m:[['ous','oso']],ex:[['delicioso','delicious'],['curioso','curious'],['furioso','furious']]},
+ {en:'st- / sp- / sc-',es:'est- / esp- / esc-',pre:true,m:[],ex:[['especial','special',['special','ispecial']],['estatua','statue',['statua','istatua']],['estómago','stomach',['stómago','astómago']]]}
+];
+const ERULE=RULES[RULES.length-1];
+const needsE=w=>/^s[bcdfghjklmnpqrstvwxz]/.test(w);
+const TRAPS={
+ actual:'In Spanish <b>actual</b> means “current,” not “real.” For “real” say <b>real</b> or <b>verdadero</b>.',
+ exit:'<b>Éxito</b> means success. Exit is <b>salida</b>.',
+ embarrassed:'<b>Embarazada</b> means pregnant! Embarrassed is <b>avergonzado</b>.',
+ library:'<b>Librería</b> is a bookshop. Library is <b>biblioteca</b>.'
+};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ruleLabel=r=>r.es==='same'?r.en+' → stays the same':r.en+' → '+r.es;
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* belt */
+const beltItems=RULES.map(r=>r.ex[0]).map(([es,en])=>`<span>${esc(en)} <i>→</i> ${esc(es)}</span>`).join('');
+$('belt').innerHTML=beltItems+beltItems.replace(/<span>/g,'<span aria-hidden="true">');
+
+/* rule cards */
+$('ruleList').innerHTML=RULES.map((r,i)=>`
+ <li class="card rule${r.pre?" new":""}">
+  <div class="rule-head"><span class="num">RULE ${String(i+1).padStart(2,"0")}${r.pre?" · NEW, FROM THE VIDEO":""}</span>
+   <span class="end en">${esc(r.en)}</span><span class="arrow" aria-hidden="true">→</span>
+   ${r.es==='same'?'<span class="end same">stays the same</span>':`<span class="end es">${esc(r.es)}</span>`}
+   <span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">${r.es==='same'?'':'becomes '+esc(r.es)}</span>
+  </div>
+  <ul>${r.ex.map(([es,en])=>`<li>${esc(es)} <span>(${esc(en)})</span></li>`).join('')}</ul>
+  <button class="btn small sun" type="button" data-try="${esc(r.ex[0][1])}">Try it</button>
+ </li>`).join('');
+$('ruleList').addEventListener('click',e=>{
+  const b=e.target.closest('[data-try]'); if(!b) return;
+  $('convInput').value=b.dataset.try; convert();
+  $('convert').scrollIntoView({block:'start'}); $('convInput').focus({preventScroll:true});
+});
+
+/* converter */
+const MATCHES=RULES.flatMap(r=>r.m.map(([en,es])=>({en,es,rule:r}))).sort((a,b)=>b.en.length-a.en.length);
+function convert(){
+  const raw=$('convInput').value.trim().toLowerCase();
+  const out=$('convOut');
+  const word=raw.replace(/[^a-z]/g,'');
+  out.classList.remove('pop'); void out.offsetWidth;
+  if(!word){out.className='result empty';out.innerHTML='Type an English word first. Try <b>generous</b>, <b>nation</b> or <b>electric</b>.';return}
+  const trap=TRAPS[word]?`<p class="warn">⚠️ Plot twist! ${TRAPS[word]}</p>`:'';
+  const hit=MATCHES.find(m=>word.endsWith(m.en)&&word.length>=m.en.length+1);
+  const pre=needsE(word);
+  const ePill=pre?`<span class="ruleused">Rule: Extra E (${esc(ruleLabel(ERULE))})</span> `:'';
+  if(!hit&&pre){
+    out.className='result pop';
+    out.innerHTML=`<p class="from">${esc(word)} becomes</p><p class="big">e${esc(word)}</p>${ePill}
+     <p class="tip">Spanish words can't start with s + consonant, so an E goes in front. The rest may still change (stress → estrés), so check a dictionary.</p>${trap}`;
+    return;
+  }
+  if(!hit){
+    out.className='result pop';
+    out.innerHTML=`<p class="from">${esc(word)}</p><p style="font-weight:800;margin-top:6px">No machine for that ending yet.</p>
+     <p class="tip">Words ending in -tion, -ty, -ous, -ive, -ist, -ic, -al and -ant/-ent work best. Try <b>curiosity</b>, <b>famous</b> or <b>national</b>.</p>${trap}`;
+    return;
+  }
+  // Spanish spells the English "y" vowel as "i" (typical → típico)
+  const es=(pre?'e':'')+word.slice(0,word.length-hit.en.length).replace(/(?!^)y(?![aeiou])/g,'i')+hit.es;
+  out.className='result pop';
+  out.innerHTML=`<p class="from">${esc(word)} becomes</p><p class="big">${esc(es)}</p>
+   ${ePill}<span class="ruleused">Rule: ${esc(ruleLabel(hit.rule))}</span>
+   <p class="tip">This is a smart guess. Check the accent (máximo, rápido) and gender (el/la) in a dictionary.</p>${trap}`;
+}
+$('convForm').addEventListener('submit',e=>{e.preventDefault();convert()});
+
+/* quiz */
+const POOL=RULES.flatMap(r=>r.ex.map(([es,en,wrong])=>{
+  if(wrong) return {es,en,rule:r,wrong};
+  const end=r.m.map(m=>m[1]).find(x=>es.endsWith(x))||'';
+  return {es,en,rule:r,stem:es.slice(0,es.length-end.length),end};
+}));
+const ALL_ES=new Set(POOL.map(p=>p.es));
+const FAKE=['oso','ivo','ista','ura','ario','ada','ido','ismo','dad','ante','ico','oria','ción','ente'];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function distractors(p){
+  if(p.wrong) return p.wrong;
+  const out=new Set();
+  for(const f of shuffle(FAKE)){
+    if(f===p.end) continue;
+    const st=/[aeiouáéíóú]$/.test(p.stem)&&/^[aeiou]/.test(f)?p.stem.slice(0,-1):p.stem;
+    const w=st+f;
+    if(w!==p.es&&!ALL_ES.has(w)) out.add(w);
+    if(out.size===2) break;
+  }
+  return [...out];
+}
+let qs=[],qi=0,score=0;
+function startQuiz(){qs=shuffle(POOL).slice(0,10);qi=0;score=0;$('quizDone').hidden=true;$('quizPlay').hidden=false;showQ()}
+function showQ(){
+  const p=qs[qi];
+  $('qNum').textContent=`Question ${qi+1} / ${qs.length}`;
+  $('qScore').textContent=`Score ${score}`;
+  $('qBar').style.width=(qi/qs.length*100)+'%';
+  $('qText').innerHTML=`How do you say <em>${esc(p.en)}</em> in Spanish?`;
+  $('qFeedback').innerHTML='';
+  $('qNext').hidden=true;
+  $('qChoices').innerHTML=shuffle([p.es,...distractors(p)]).map(c=>`<button class="btn choice" type="button" data-c="${esc(c)}">${esc(c)}</button>`).join('');
+}
+$('qChoices').addEventListener('click',e=>{
+  const b=e.target.closest('.choice'); if(!b||b.disabled) return;
+  const p=qs[qi], ok=b.dataset.c===p.es;
+  $('qChoices').querySelectorAll('.choice').forEach(x=>{x.disabled=true;if(x.dataset.c===p.es)x.classList.add('right')});
+  if(ok){score++;addWord(p.en,p.es);$('qFeedback').innerHTML=`✅ ¡Correcto! Rule <span class="rl">${esc(ruleLabel(p.rule))}</span> · added to your card`}
+  else{b.classList.add('wrong');$('qFeedback').innerHTML=`❌ Not quite. It’s <b>${esc(p.es)}</b>. Rule <span class="rl">${esc(ruleLabel(p.rule))}</span>`}
+  $('qScore').textContent=`Score ${score}`;
+  $('qBar').style.width=((qi+1)/qs.length*100)+'%';
+  const n=$('qNext'); n.textContent=qi===qs.length-1?'See results →':'Next word →'; n.hidden=false; n.focus({preventScroll:true});
+});
+$('qNext').addEventListener('click',()=>{qi++; if(qi<qs.length){showQ();$('qChoices').querySelector('.choice').focus({preventScroll:true})} else finish()});
+function finish(){
+  $('quizPlay').hidden=true;$('quizDone').hidden=false;
+  $('rScore').textContent=`${score}/${qs.length}`;
+  $('rMsg').textContent=score===10?'Perfect shift! The factory runs on your brain now.':score>=7?'Great work. A few more rounds and you’ll spot endings everywhere.':score>=4?'Good start. Check the rule cards and run it again.':'Every expert started here. Peek at the rules and play again.';
+  $('qAgain').focus({preventScroll:true});
+}
+$('qAgain').addEventListener('click',()=>{startQuiz();$('qChoices').querySelector('.choice').focus({preventScroll:true})});
+
+/* word card */
+let words=[];
+try{words=JSON.parse(store.get('swf-words')||'[]');if(!Array.isArray(words))words=[]}catch(e){words=[]}
+function addWord(en,es){if(!words.some(w=>w[1]===es)){words.push([en,es]);store.set('swf-words',JSON.stringify(words))}renderCard()}
+function renderCard(){
+  $('wcCount').textContent=words.length;
+  $('wcEmpty').hidden=words.length>0;
+  $('wcChips').hidden=words.length===0;
+  $('wcChips').innerHTML=words.map(([en,es])=>`<li class="chip">${esc(en)} <span>→</span> ${esc(es)}</li>`).join('');
+}
+$('wcClear').addEventListener('click',()=>{words=[];store.set('swf-words','[]');renderCard()});
+
+renderCard();startQuiz();
+})();
+</script>
+</body>
+</html>
